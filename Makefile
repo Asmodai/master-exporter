@@ -38,6 +38,15 @@ build: deps
 		-ldflags "-s -w $(GIT_VERSION)" \
 		$(CMD_DIR)/$(APP)
 
+build-arm64: deps
+	@echo Building $(APP) for ARM64
+	$(eval GIT_VERSION = $(shell scripts/tag2semver.sh $(VERSION) 2>/dev/null))
+	env GOOS=linux GOARCH=arm64 go build    \
+		-tags=go_json                   \
+		-o $(ROOT_DIR)/bin/$(APP)       \
+		-ldflags "-s -w $(GIT_VERSION)" \
+		$(CMD_DIR)/$(APP)
+
 test: deps
 	@echo Running tests
 	@go test --tags=testing $$(go list ./...) -coverprofile=tests.out
