@@ -42,6 +42,10 @@ func NewDefaultConfig() *Config {
 }
 
 func Validate(cnf *Config) {
+	if cnf == nil {
+		return
+	}
+
 	if cnf.Interval < 10 {
 		cnf.Interval = 10
 	}

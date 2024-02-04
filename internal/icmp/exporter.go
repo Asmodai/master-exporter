@@ -73,6 +73,12 @@ func (e *Exporter) ping(host string) (error, *probing.Statistics) {
 		return err, nil
 	}
 
+	/*
+	 * This requires the following:
+	 *
+	 * sudo setcap cap_net_raw=+ep /path/to/master-exporter
+	 */
+	pinger.SetPrivileged(true)
 	pinger.Count = icmpCount
 	pinger.Size = icmpSize
 	pinger.Timeout = icmpTimeout

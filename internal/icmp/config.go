@@ -42,9 +42,10 @@ func NewDefaultConfig() *Config {
 }
 
 func Validate(cnf *Config) {
-	/*
-	 * We want to avoid pinging too often.
-	 */
+	if cnf == nil {
+		return
+	}
+
 	if cnf.Interval < 10 {
 		cnf.Interval = 10
 	}
