@@ -1,5 +1,5 @@
 /*
- * metrics.go --- Netgear metrics.
+ * metrics.go --- ICMP metrics.
  *
  * Copyright (c) 2022-2024 Paul Ward <asmodai@gmail.com>
  *
@@ -27,91 +27,57 @@
  * SOFTWARE.
  */
 
-package netgear
+package icmp
 
 import (
 	"github.com/prometheus/client_golang/prometheus"
-
-	"fmt"
 )
 
-type SwitchMetrics struct {
+type IcmpMetrics struct {
 	Metric map[string]prometheus.Gauge
 }
 
-func NewSwitchMetrics() *SwitchMetrics {
-	return &SwitchMetrics{
+func NewIcmpMetrics() *IcmpMetrics {
+	return &IcmpMetrics{
 		Metric: map[string]prometheus.Gauge{},
 	}
 }
 
-func (sm *SwitchMetrics) AddMetric(name, help, pretty string) {
-	if sm.Metric == nil {
-		sm.Metric = map[string]prometheus.Gauge{}
+func (im *IcmpMetrics) AddMetric(name, help, pretty string) {
+	if im.Metric == nil {
+		im.Metric = map[string]prometheus.Gauge{}
 	}
 
-	if _, ok := sm.Metric[name]; !ok {
-		fmt.Printf("Adding metric %s{switch=\"%s\"}\n", name, pretty)
-		sm.Metric[name] = prometheus.NewGauge(prometheus.GaugeOpts{
-			Namespace: "netgear",
+	if _, ok := im.Metric[name]; !ok {
+		im.Metric[name] = prometheus.NewGauge(prometheus.GaugeOpts{
+			Namespace: "icmp",
 			Name:      name,
 			Help:      help,
 			ConstLabels: map[string]string{
-				"switch": pretty,
+				"host": pretty,
 			},
 		})
-		_ = prometheus.Register(sm.Metric[name])
+		_ = prometheus.Register(im.Metric[name])
 	}
 }
 
-func (sm *SwitchMetrics) AddPortMetric(name, help, pretty string, port int) {
-	if sm.Metric == nil {
-		sm.Metric = map[string]prometheus.Gauge{}
-	}
-
-	sport := fmt.Sprintf("%02d", port+1)
-
-	if _, ok := sm.Metric[name+sport]; !ok {
-		sm.Metric[name+sport] = prometheus.NewGauge(prometheus.GaugeOpts{
-			Namespace: "netgear",
-			Name:      name,
-			Help:      help,
-			ConstLabels: map[string]string{
-				"port":   sport,
-				"switch": pretty,
-			},
-		})
-		_ = prometheus.Register(sm.Metric[name+sport])
-	}
-}
-
-func (sm *SwitchMetrics) SetMetric(name string, value uint64) {
-	if _, ok := sm.Metric[name]; !ok {
+func (im *IcmpMetrics) SetMetric(name string, value float64) {
+	if _, ok := im.Metric[name]; !ok {
 		return
 	}
 
-	sm.Metric[name].Set(float64(value))
-}
-
-func (sm *SwitchMetrics) SetPortMetric(name string, port int, value uint64) {
-	sport := fmt.Sprintf("%02d", port+1)
-
-	if _, ok := sm.Metric[name+sport]; !ok {
-		return
-	}
-
-	sm.Metric[name+sport].Set(float64(value))
+	im.Metric[name].Set(value)
 }
 
 // =================================================================
 
 type Metrics struct {
-	metrics map[string]*SwitchMetrics
+	metrics map[string]*IcmpMetrics
 }
 
 func NewMetrics() *Metrics {
 	return &Metrics{
-		metrics: map[string]*SwitchMetrics{},
+		metrics: map[string]*IcmpMetrics{},
 	}
 }
 
@@ -125,22 +91,22 @@ func (m *Metrics) Keys() []string {
 	return keys
 }
 
-func (m *Metrics) HasSwitch(key string) bool {
+func (m *Metrics) HasHost(key string) bool {
 	_, ok := m.metrics[key]
 
 	return ok
 }
 
-func (m *Metrics) AddSwitch(key string) {
+func (m *Metrics) AddHost(key string) {
 	if _, ok := m.metrics[key]; ok {
 		return
 	}
 
-	m.metrics[key] = NewSwitchMetrics()
+	m.metrics[key] = NewIcmpMetrics()
 }
 
-func (m *Metrics) GetSwitch(key string) *SwitchMetrics {
-	m.AddSwitch(key)
+func (m *Metrics) GetHost(key string) *IcmpMetrics {
+	m.AddHost(key)
 
 	return m.metrics[key]
 }

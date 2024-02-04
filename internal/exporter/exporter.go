@@ -1,7 +1,7 @@
 /*
  * exporter.go --- Exporter.
  *
- * Copyright (c) 2022 Paul Ward <asmodai@gmail.com>
+ * Copyright (c) 2022-2024 Paul Ward <asmodai@gmail.com>
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
@@ -49,7 +49,7 @@ func NewExporter(name string, obj IExporter, lgr logger.ILogger) *Exporter {
 }
 
 func (e *Exporter) Action(_ **process.State) {
-	e.lgr.Info(
+	e.lgr.Debug(
 		"Refreshing data",
 		"exporter", e.name,
 	)

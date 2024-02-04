@@ -3,7 +3,7 @@
 #
 # tag2semver.sh --- Convert a git tag to semver info.
 #
-# Copyright (c) 2022 Paul Ward <asmodai@gmail.com>
+# Copyright (c) 2022-2024 Paul Ward <asmodai@gmail.com>
 #
 # Author:     Paul Ward <asmodai@gmail.com>
 # Maintainer: Paul Ward <asmodai@gmail.com>

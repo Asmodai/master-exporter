@@ -1,5 +1,5 @@
 /*
- * iexporter.go --- Exporter iexporter.
+ * icmp.go --- ICMP exporter.
  *
  * Copyright (c) 2022-2024 Paul Ward <asmodai@gmail.com>
  *
@@ -27,11 +27,51 @@
  * SOFTWARE.
  */
 
-package exporter
+package main
 
-type IExporter interface {
-	Interval() int
-	Scrape() error
+import (
+	"github.com/Asmodai/gohacks/utils"
+
+	"github.com/Asmodai/master-exporter/internal/config"
+	"github.com/Asmodai/master-exporter/internal/exporter"
+	"github.com/Asmodai/master-exporter/internal/icmp"
+)
+
+func (m *MasterExporter) initIcmp() {
+	cnf := m.config.AppConfig.(*config.AppConfig)
+
+	if !utils.Member(cnf.Enabled, "icmp") {
+		return
+	}
+
+	exp := icmp.NewExporter(
+		m.appl.Context(),
+		m.appl.Logger(),
+		cnf.Icmp,
+	)
+
+	if err := exp.Setup(); err != nil {
+		panic(err.Error())
+	}
+	if err := exp.Scrape(); err != nil {
+		panic(err.Error())
+	}
+	m.config.Logger.Info(
+		"Initial scrape complete.",
+		"exporter", "icmp",
+	)
+
+	params := exporter.NewParams(
+		"icmp",
+		exp,
+		m.config.ProcessManager,
+		m.config.Logger,
+	)
+
+	_, err := exporter.Spawn(params)
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
-/* iexporter.go ends here. */
+/* icmp.go ends here. */

@@ -1,7 +1,7 @@
 /*
  * config.go --- Exporter configuration.
  *
- * Copyright (c) 2022 Paul Ward <asmodai@gmail.com>
+ * Copyright (c) 2022-2024 Paul Ward <asmodai@gmail.com>
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
@@ -32,6 +32,8 @@ package config
 import (
 	"github.com/Asmodai/gohacks/apiclient"
 
+	"github.com/Asmodai/master-exporter/internal/dns"
+	"github.com/Asmodai/master-exporter/internal/icmp"
 	"github.com/Asmodai/master-exporter/internal/netgear"
 	"github.com/Asmodai/master-exporter/internal/openweathermap"
 	"github.com/Asmodai/master-exporter/internal/sabnzbd"
@@ -46,6 +48,8 @@ type AppConfig struct {
 	OpenWeatherMap *openweathermap.Config `json:"openweathermap"`
 	SabNZBd        *sabnzbd.Config        `json:"sabnzbd"`
 	Netgear        *netgear.Config        `json:"netgear"`
+	Icmp           *icmp.Config           `json:"icmp"`
+	Dns            *dns.Config            `json:"dns"`
 }
 
 func (c *AppConfig) Init() error {
@@ -56,6 +60,12 @@ func (c *AppConfig) Init() error {
 	if c.ApiClient == nil {
 		c.ApiClient = apiclient.NewDefaultConfig()
 	}
+
+	openweathermap.Validate(c.OpenWeatherMap)
+	sabnzbd.Validate(c.SabNZBd)
+	netgear.Validate(c.Netgear)
+	icmp.Validate(c.Icmp)
+	dns.Validate(c.Dns)
 
 	return nil
 }

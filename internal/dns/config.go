@@ -1,5 +1,5 @@
 /*
- * iexporter.go --- Exporter iexporter.
+ * config.go --- DNS exporter configuration.
  *
  * Copyright (c) 2022-2024 Paul Ward <asmodai@gmail.com>
  *
@@ -27,11 +27,24 @@
  * SOFTWARE.
  */
 
-package exporter
+package dns
 
-type IExporter interface {
-	Interval() int
-	Scrape() error
+type Config struct {
+	Hosts    []string `json:"hosts"`
+	Interval int      `json:"interval"`
 }
 
-/* iexporter.go ends here. */
+func NewDefaultConfig() *Config {
+	return &Config{
+		Hosts:    []string{},
+		Interval: 20,
+	}
+}
+
+func Validate(cnf *Config) {
+	if cnf.Interval < 10 {
+		cnf.Interval = 10
+	}
+}
+
+/* config.go ends here. */

@@ -1,5 +1,5 @@
 /*
- * iexporter.go --- Exporter iexporter.
+ * dns.go --- DNS resolver exporter.
  *
  * Copyright (c) 2022-2024 Paul Ward <asmodai@gmail.com>
  *
@@ -27,11 +27,51 @@
  * SOFTWARE.
  */
 
-package exporter
+package main
 
-type IExporter interface {
-	Interval() int
-	Scrape() error
+import (
+	"github.com/Asmodai/gohacks/utils"
+
+	"github.com/Asmodai/master-exporter/internal/config"
+	"github.com/Asmodai/master-exporter/internal/dns"
+	"github.com/Asmodai/master-exporter/internal/exporter"
+)
+
+func (m *MasterExporter) initDns() {
+	cnf := m.config.AppConfig.(*config.AppConfig)
+
+	if !utils.Member(cnf.Enabled, "dns") {
+		return
+	}
+
+	exp := dns.NewExporter(
+		m.appl.Context(),
+		m.appl.Logger(),
+		cnf.Dns,
+	)
+
+	if err := exp.Setup(); err != nil {
+		panic(err.Error())
+	}
+	if err := exp.Scrape(); err != nil {
+		panic(err.Error())
+	}
+	m.config.Logger.Info(
+		"Initial scrape complete.",
+		"exporter", "dns",
+	)
+
+	params := exporter.NewParams(
+		"dns",
+		exp,
+		m.config.ProcessManager,
+		m.config.Logger,
+	)
+
+	_, err := exporter.Spawn(params)
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
-/* iexporter.go ends here. */
+/* dns.go ends here. */

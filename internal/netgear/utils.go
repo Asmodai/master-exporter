@@ -1,7 +1,7 @@
 /*
  * utils.go --- Utilities.
  *
- * Copyright (c) 2022 Paul Ward <asmodai@gmail.com>
+ * Copyright (c) 2022-2024 Paul Ward <asmodai@gmail.com>
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
@@ -61,7 +61,7 @@ func GetInterfaceIPAddr(iface *net.Interface) (string, error) {
 		}
 	}
 
-	return "", fmt.Errorf("Could not locate unicast IP for '%'", iface.Name)
+	return "", fmt.Errorf("Could not locate unicast IP for '%s'", iface.Name)
 }
 
 /* utils.go ends here. */

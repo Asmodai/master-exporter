@@ -3,7 +3,7 @@
 #
 # log.sh --- Log file pretty-printer.
 #
-# Copyright (c) 2022 Paul Ward <asmodai@gmail.com>
+# Copyright (c) 2022-2024 Paul Ward <asmodai@gmail.com>
 #
 # Author:     Paul Ward <asmodai@gmail.com>
 # Maintainer: Paul Ward <asmodai@gmail.com>

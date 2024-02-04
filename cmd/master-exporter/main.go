@@ -1,7 +1,7 @@
 /*
  * main.go --- Master exporter command.
  *
- * Copyright (c) 2022 Paul Ward <asmodai@gmail.com>
+ * Copyright (c) 2022-2024 Paul Ward <asmodai@gmail.com>
  *
  * Author:     Paul Ward <asmodai@gmail.com>
  * Maintainer: Paul Ward <asmodai@gmail.com>
@@ -87,6 +87,8 @@ func (m *MasterExporter) Main() {
 	m.initOMW()
 	m.initSab()
 	m.initNG()
+	m.initIcmp()
+	m.initDns()
 	m.initPrometheus()
 
 	m.appl.Run()
